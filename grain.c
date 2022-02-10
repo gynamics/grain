@@ -19,6 +19,7 @@
     typeof(y) _y=(y);                          \
     (_x < _y) ? _x : _y;                       \
 })
+#define dye(r,g,b) ((r)*36+(g)*6+(b)+16)
 
 struct rgb_t{short r:4;short g:4; short b:4;short a:4;};
 
