@@ -24,7 +24,7 @@
 struct rgb_t{short r:4;short g:4; short b:4;short a:4;};
 
 void alloc_scene(char ****pscene, struct winsize *pwsz){
-    *pscene = (char ***)malloc(sizeof(char **) * pwsz->ws_row);
+    *pscene = (char ***)malloc(sizeof(char **) * (pwsz->ws_row+1));
     int i, j;
     for(i=0; i<pwsz->ws_row+1; i++){
         (*pscene)[i] = (char **)malloc(sizeof(char *) * pwsz->ws_col);
