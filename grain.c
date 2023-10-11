@@ -70,6 +70,11 @@ void init_scene(char ***scene, struct winsize *pwsz, struct rgb_t c){
             dye(c.r, c.g, c.b), // just green
             (char)(0x20 + rand() % 0x5f));// all visible ascii
     }
+    for(i=1; i<pwsz->ws_row; i++){
+        for(j=0; j<pwsz->ws_col; j++){
+            scene[i][j][0]=' '; // fill it with space
+         }
+    }
 }
 
 void dump_scene(char ***scene, struct winsize *pwsz, struct rgb_t c){
