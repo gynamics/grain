@@ -3,7 +3,6 @@
  * make sure your terminal supports 256 color
  */
 
-#include <math.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +19,7 @@
     typeof(y) _y = (y);                                                        \
     (_x < _y) ? _x : _y;                                                       \
   })
-#define dye(r, g, b) ((r)*36 + (g)*6 + (b) + 16)
+#define dye(r, g, b) ((r) * 36 + (g) * 6 + (b) + 16)
 
 struct rgb_t {
   short r : 4;
@@ -52,9 +51,8 @@ void alloc_scene(char ****pscene, struct winsize *pwsz) {
 void free_scene(char ***scene, struct winsize *pwsz) {
   int i, j;
   for (i = 0; i < pwsz->ws_row + 1; i++) {
-    for (j = 0; j < pwsz->ws_col; j++) {
+    for (j = 0; j < pwsz->ws_col; j++)
       free(scene[i][j]);
-    }
     free(scene[i]);
   }
   free(scene);
@@ -62,10 +60,10 @@ void free_scene(char ***scene, struct winsize *pwsz) {
 }
 
 void copy_scene(char ***dst, char ***src, int ws_row, int ws_col) {
-  for (int i = 0; i < ws_row + 1; i++) {
-    for (int j = 0; j < ws_col; j++) {
+  int i, j;
+  for (i = 0; i < ws_row + 1; i++) {
+    for (j = 0; j < ws_col; j++)
       strcpy(dst[i][j], src[i][j]);
-    }
   }
 }
 
@@ -90,11 +88,10 @@ void init_scene(char ***scene, struct winsize *pwsz, struct rgb_t c) {
 void dump_scene(char ***scene, struct winsize *pwsz, struct rgb_t c) {
   int i, j;
   for (j = 0; j < pwsz->ws_col; j++) {
-    if (scene[0][j][14] == 6) {
+    if (scene[0][j][14] == 6)
       scene[0][j][14] = 2 + (rand() + j) % 4;
-    } else if (rand() % (1 + scene[0][j][14]) == 0) {
+    else if (rand() % (1 + scene[0][j][14]) == 0)
       scene[0][j][14] = (scene[0][j][14] + 6) % 7;
-    }
     sprintf(scene[0][j],
             "\e[38;5;%dm"
             "%c",
@@ -108,9 +105,8 @@ void dump_scene(char ***scene, struct winsize *pwsz, struct rgb_t c) {
         scene[i - 1][j][15] =
             rand() % (2 + 2 * (pwsz->ws_row - i) / pwsz->ws_row);
         strcpy(scene[i][j], scene[i - 1][j]);
-      } else {
+      } else
         scene[i - 1][j][15]--;
-      }
     }
   }
   return;
@@ -119,10 +115,9 @@ void dump_scene(char ***scene, struct winsize *pwsz, struct rgb_t c) {
 void print_sence(char ***scene, struct winsize *pwsz) {
   int i, j;
   printf("\e[1;1H"); // set cursor to (1,1)
-  for (i = 1; i <= pwsz->ws_row; i++) {
-    for (j = 0; j < pwsz->ws_col; j++) {
+  for (i = 1; i < pwsz->ws_row + 1; i++) {
+    for (j = 0; j < pwsz->ws_col; j++)
       printf("%s", scene[i][j]);
-    }
   }
   fflush(stdout);
   return;
@@ -130,16 +125,15 @@ void print_sence(char ***scene, struct winsize *pwsz) {
 
 int pflag = 1; // set it to 0 for pause
 
-void hquit() {
+void hquit(int _) {
   // pop & show cursor, recover style, clear screen
   puts("\e[u"
        "\e[?25h"
-       "\e[0m"
-       "\e[2J");
+       "\e[0m");
   exit(0);
 }
 
-void hpause() { pflag = !pflag; }
+void hpause(int _) { pflag = !pflag; }
 
 int main(int argc, char *argv[]) {
   if (argc > 1) {
@@ -169,7 +163,7 @@ int main(int argc, char *argv[]) {
   // push & hide cursor
   puts("\e[s"
        "\e[25?l");
-  while (1) { // add more interactive features here
+  for (;;) { // add more interactive features here
     if (cnt++ == 5) {
       cnt = 0;
       ioctl(fileno(stdout), TIOCGWINSZ, (char *)&twsz);
@@ -189,7 +183,7 @@ int main(int argc, char *argv[]) {
     } else {
       fflush(stdout);
       while (!pflag)
-        ;
+        usleep(40000);
     }
     usleep(40000); // fps = 1,000,000 / 40,000 = 25hz
     rainbowcnt++;
